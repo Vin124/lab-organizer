@@ -42,7 +42,7 @@ export function resetLayout() {
 // ---- load + render ----
 export async function loadRoot(path) {
   canvas.innerHTML = '<div class="loading">Loading…</div>';
-  const node = await api.tree(path, 1);
+  const node = await api.tree(path, 2); // projects + their children in one payload
   viewRoot = node.path;
   canvas.innerHTML = "";
   canvas.appendChild(renderNode(node, 0, true));
@@ -63,7 +63,9 @@ export function renderNode(node, depth, isRoot = false) {
   el.dataset.depth = String(depth);
   el.dataset.loaded = node.children_loaded ? "1" : "0";
   el.draggable = depth >= 2; // user/folder draggable; server/project move via grip
-  const open = isRoot; // start with folders collapsed; keep the root visible
+  // Root always visible; project cards open by default when their children
+  // came down in the payload. Deeper folders start collapsed (lazy expand).
+  const open = isRoot || (depth === 1 && Boolean(node.children));
   if (open) el.classList.add("open");
 
   const head = document.createElement("div");

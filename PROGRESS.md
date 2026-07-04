@@ -137,7 +137,18 @@ python -m ruff check backend/ tests/
 
 ## Log
 
-### 2026-07-04 (published as open source)
+### 2026-07-04 (CI caught a Browse regression — fixed)
+- First CI run on the new repo: ruff + 86 unit/integration tests green, but the
+  **Playwright e2e failed** (timeout waiting for `.chip[data-name="train.py"]`).
+  Root cause: `loadRoot` in `frontend/browse.js` requested `api.tree(path, 1)` —
+  server semantics are depth=1 → root + children only — so project-card children
+  (the file chips) were never in the payload, and cards rendered collapsed+empty
+  until clicked. This contradicted the verified redesign behavior ("projects open
+  by default since their children are in the depth-2 payload"); the depth had
+  evidently been dropped to 1 after the last green e2e. Fix: `api.tree(path, 2)`
+  + project cards (depth 1) start open when their children arrived. Reproduced
+  the failure locally first (after `playwright install chromium` — local browser
+  cache was stale), then verified: **e2e passes in 4.3s**; CI re-run green.
 - **Repo is live: https://github.com/Vin124/lab-organizer** (public). The local
   `.git` was an empty dir, so `git init -b main` → single initial commit (61 files;
   `moves.log`, caches, and `.claude/.agents/.codex` gitignored) → `gh repo create
