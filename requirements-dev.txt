@@ -1,0 +1,7 @@
+# Dev/CI dependencies (the app itself only needs requirements.txt).
+-r requirements.txt
+pytest>=8
+ruff>=0.5
+httpx>=0.27          # FastAPI TestClient transport
+# E2E only (installed separately in the CI e2e job):
+#   pip install pytest-playwright && playwright install --with-deps chromium

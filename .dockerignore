@@ -1,0 +1,15 @@
+.git
+.github
+.claude
+docs
+tests
+scripts
+*.md
+.env
+.env.example
+moves.log
+__pycache__
+.pytest_cache
+.ruff_cache
+*.pyc
+requirements-dev.txt

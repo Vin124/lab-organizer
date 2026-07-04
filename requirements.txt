@@ -1,0 +1,4 @@
+fastapi>=0.110
+uvicorn[standard]>=0.27
+# Optional: only needed for the AI advisor.
+anthropic>=0.40

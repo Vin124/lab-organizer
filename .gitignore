@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+moves.log
+.pytest_cache/
+.ruff_cache/
+.claude/
+.agents/
+.codex/
+.DS_Store

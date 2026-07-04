@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an idea or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the situation where the current tool falls short.
+      placeholder: When organizing a tree with thousands of ...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: markdown
+    attributes:
+      value: |
+        Note: proposals that weaken the safety invariants (confirmation gate,
+        path allowlist, never-overwrite, audit log) won't be accepted — see
+        CONTRIBUTING.md.
