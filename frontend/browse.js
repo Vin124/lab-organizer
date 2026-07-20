@@ -47,7 +47,7 @@ export async function loadRoot(path) {
   canvas.innerHTML = "";
   canvas.appendChild(renderNode(node, 0, true));
   renderBreadcrumb(node.path);
-  requestAnimationFrame(recomputeCanvas);
+  requestAnimationFrame(() => settle());
 }
 
 export function renderNode(node, depth, isRoot = false) {
@@ -126,7 +126,7 @@ function appendChildren(body, node, depth) {
       try {
         const next = await api.expand(body.closest(".node").dataset.path, node.next_offset);
         appendChildren(body, next, depth);
-        requestAnimationFrame(recomputeCanvas);
+        requestAnimationFrame(() => settle());
       } catch (err) { more.disabled = false; more.textContent = `Error: ${err.message} — retry`; }
     });
     body.appendChild(more);
@@ -136,7 +136,7 @@ function appendChildren(body, node, depth) {
 async function toggle(el, depth) {
   const opening = !el.classList.contains("open");
   el.classList.toggle("open");
-  requestAnimationFrame(recomputeCanvas);
+  requestAnimationFrame(() => settle());
   el.querySelector(":scope > .node-head .caret").textContent = opening ? "–" : "+";
   if (!opening) return;
 
@@ -147,7 +147,7 @@ async function toggle(el, depth) {
     const node = await api.expand(el.dataset.path);
     renderChildren(body, node, Number(el.dataset.depth));
     el.dataset.loaded = "1";
-    requestAnimationFrame(recomputeCanvas);
+    requestAnimationFrame(() => settle());
   } catch (err) {
     body.innerHTML = `<div class="loading">Error: ${escapeHtml(err.message)}</div>`;
   }
@@ -310,13 +310,58 @@ function onPointerMove(e) {
 }
 function onPointerUp() {
   if (!drag) return;
-  drag.el.classList.remove("active");
+  const el = drag.el;
+  el.classList.remove("active");
   drag = null;
   saveLayout();
-  recomputeCanvas();
+  settle(el);
 }
 window.addEventListener("pointermove", onPointerMove);
 window.addEventListener("pointerup", onPointerUp);
+
+// Collision resolution: no two project cards may overlap. The pinned card (the
+// one the user just moved/resized) stays put; overlapping cards are pushed down
+// below it, cascading until the layout is clear. Runs after render/expand/drag,
+// not during pointermove, so the card under the cursor never fights the user.
+const CARD_GAP = 12;
+function resolveCollisions(pinnedEl = null) {
+  const cv = canvas.querySelector(".proj-canvas");
+  if (!cv) return;
+  const cards = [...cv.querySelectorAll(":scope > .node.project")].map((el) => ({
+    el, x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight,
+    pinned: el === pinnedEl, moved: false,
+  }));
+  if (cards.length < 2) return;
+  cards.sort((a, b) => (b.pinned - a.pinned) || (a.y - b.y) || (a.x - b.x));
+  const placed = [];
+  for (const c of cards) {
+    if (!c.pinned) {
+      for (let i = 0; i < placed.length; i += 1) {
+        const p = placed[i];
+        if (c.x < p.x + p.w && p.x < c.x + c.w && c.y < p.y + p.h && p.y < c.y + c.h) {
+          c.y = p.y + p.h + CARD_GAP; // y only grows, so this terminates
+          c.moved = true;
+          i = -1; // re-check against everything already placed
+        }
+      }
+    }
+    placed.push(c);
+  }
+  let changed = false;
+  for (const c of cards) {
+    if (!c.moved) continue;
+    changed = true;
+    c.el.style.top = c.y + "px";
+    const L = layout[c.el.dataset.path];
+    if (L) L.y = c.y;
+  }
+  if (changed) saveLayout();
+}
+
+function settle(pinnedEl = null) {
+  resolveCollisions(pinnedEl);
+  recomputeCanvas();
+}
 
 function recomputeCanvas() {
   const cv = canvas.querySelector(".proj-canvas");

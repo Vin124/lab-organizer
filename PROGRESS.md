@@ -137,6 +137,19 @@ python -m ruff check backend/ tests/
 
 ## Log
 
+### 2026-07-19 (project-card collision resolution)
+- **Project cards on the root canvas no longer overlap.** Two causes: the default
+  grid in `defaultPos` assumes a 392px row while card height is content-driven, and
+  free-drag allowed dropping a card on top of another. Added `resolveCollisions()`
+  in `frontend/browse.js`: cards are measured (`offset*`), sorted pinned-first then
+  top-to-bottom, and any card intersecting an already-placed one is pushed below it
+  (+12px gap, cascading; y only grows so it terminates). The pinned card — the one
+  the user just moved/resized — never moves, so others yield to it. Runs via a new
+  `settle()` wrapper after initial render, expand/collapse, "+N more" paging, and
+  drag/resize pointerup — deliberately NOT during pointermove, so nothing fights the
+  cursor mid-drag. Pushed positions are persisted to the layout localStorage.
+  Verified: `node --check` clean; Playwright e2e green (1 passed, 8.9s).
+
 ### 2026-07-04 (CI caught a Browse regression — fixed)
 - First CI run on the new repo: ruff + 86 unit/integration tests green, but the
   **Playwright e2e failed** (timeout waiting for `.chip[data-name="train.py"]`).
