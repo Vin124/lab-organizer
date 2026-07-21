@@ -261,3 +261,106 @@ body.organize .chip { cursor: grab; }
 .search-empty { color: var(--muted); font-size: 12px; padding: 9px; }
 
 .search-target > .node-head, .chip.search-target { outline: 2px solid var(--terra); outline-offset: 2px; border-radius: 9px; }
+
+/* theme toggle (topbar) — styled for light here; dark override below */
+.theme-toggle { width: 34px; height: 34px; flex: 0 0 auto; border-radius: 9px; cursor: pointer;
+  border: 1.5px solid var(--line-2); background: #fff; color: var(--ink-soft); font-size: 16px; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center; transition: all .14s ease; }
+.theme-toggle:hover { border-color: var(--a-border); color: var(--ink); }
+
+/* ============================================================
+   DARK THEME — "Railway" look: cool near-black + violet accent.
+   Self-contained. Everything below is scoped to [data-theme="dark"]
+   so the light theme above is left byte-for-byte unchanged. First
+   the custom props are redefined (most of the UI recolors for free),
+   then the selectors that bake in light literals are overridden.
+   ============================================================ */
+:root[data-theme="dark"] {
+  --paper: #0d0e12; --dot: #1b1d27;
+  --ink: #e8e9ef; --ink-soft: #b7bac8; --muted: #868a9b; --faint: #676b7d;
+  --line: #23252f; --line-2: #2b2e3a; --card-line: #2b2e3a;
+  --terra: #8b5cf6; --terra-soft: #6d4bc4;
+  --go: #4fbf84; --drop: #58c98d; --err: #ef6f66; --warn-amber: #e2b64a;
+  --a-soft: #16171d; --a-bg: #101116; --a-mid: #2b2e3a; --a-border: #34374a; --a-ink: #b7bac8;
+  --hand: "Nunito", system-ui, sans-serif; /* retire Caveat in dark for the sleek Railway feel */
+}
+/* per-project palettes: keep a faint hue so cards stay colour-coded, on dark surfaces */
+:root[data-theme="dark"] .pal-rose     { --a-soft:#1b1519; --a-bg:#120f12; --a-mid:#3a2b32; --a-border:#4d3541; --a-ink:#e39aad; }
+:root[data-theme="dark"] .pal-sky      { --a-soft:#14181f; --a-bg:#0e1015; --a-mid:#2a3647; --a-border:#33455c; --a-ink:#8fbae8; }
+:root[data-theme="dark"] .pal-mint     { --a-soft:#131b17; --a-bg:#0d120f; --a-mid:#294136; --a-border:#325445; --a-ink:#7fd6a6; }
+:root[data-theme="dark"] .pal-butter   { --a-soft:#1b1913; --a-bg:#12100b; --a-mid:#413a29; --a-border:#564d2f; --a-ink:#e2c96c; }
+:root[data-theme="dark"] .pal-lavender { --a-soft:#181521; --a-bg:#100e16; --a-mid:#332e47; --a-border:#413a5b; --a-ink:#bba7e8; }
+
+/* header + chrome */
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(180,184,200,.22); border: 3px solid transparent; background-clip: padding-box; }
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(180,184,200,.4); border: 3px solid transparent; background-clip: padding-box; }
+:root[data-theme="dark"] .topbar { background: rgba(18,19,25,.72); }
+:root[data-theme="dark"] .notebook-logo { background: #1c1e27; box-shadow: 2px 2px 0 rgba(139,92,246,.18); }
+:root[data-theme="dark"] .nb-ring { background: #1c1e27; }
+:root[data-theme="dark"] .theme-toggle { background: #1c1e27; color: var(--ink-soft); border-color: var(--line-2); }
+:root[data-theme="dark"] .breadcrumb { background: rgba(18,19,25,.4); }
+:root[data-theme="dark"] .breadcrumb a { color: var(--muted); }
+:root[data-theme="dark"] .breadcrumb a.here { background: #1c1e27; border-color: var(--a-border); color: var(--ink); }
+:root[data-theme="dark"] .breadcrumb .sep { color: var(--faint); }
+:root[data-theme="dark"] .modes { background: #16171d; border-color: var(--line-2); }
+:root[data-theme="dark"] .mode { color: var(--muted); }
+:root[data-theme="dark"] .mode.active { background: #2a2d3a; color: var(--ink); box-shadow: none; }
+:root[data-theme="dark"] .pill { background: #1c1e27; color: var(--muted); }
+:root[data-theme="dark"] .pill.ro { background: #2a2410; color: #e2c96c; border-color: #574c22; }
+:root[data-theme="dark"] .queue-head .count { background: var(--terra); color: #fff; }
+
+/* nodes */
+:root[data-theme="dark"] .caret { background: #1c1e27; }
+:root[data-theme="dark"] .node.server { background: rgba(22,23,29,.5); border-color: #2b2e3a; }
+:root[data-theme="dark"] .node.server > .node-head .marker { background: #2a2d3a; border-color: #3a3d4c; }
+:root[data-theme="dark"] .node.server > .node-head .node-name { color: var(--ink); }
+:root[data-theme="dark"] .node.user { background: #16171d; }
+:root[data-theme="dark"] .node.folder { background: #131419; }
+:root[data-theme="dark"] .node.folder > .node-head .marker { background: #1c1e27; }
+:root[data-theme="dark"] .node.project { box-shadow: 0 2px 10px rgba(0,0,0,.45); }
+:root[data-theme="dark"] .node.project.active { box-shadow: 0 16px 34px rgba(0,0,0,.6); }
+:root[data-theme="dark"] .node.drop-target { background: #14251b !important; }
+
+/* chips */
+:root[data-theme="dark"] .chip { background: #1a1c24; border-color: #2b2e3a; }
+:root[data-theme="dark"] .chip .fname { color: #d3d5df; }
+
+/* buttons */
+:root[data-theme="dark"] .btn { background: #1c1e27; color: var(--ink-soft); border-color: var(--line-2); }
+:root[data-theme="dark"] .btn.ghost { background: #1c1e27; }
+:root[data-theme="dark"] .btn.solid { background: var(--terra); color: #fff; }
+:root[data-theme="dark"] .btn.go { color: #08110b; }
+:root[data-theme="dark"] .reset-btn { background: #1c1e27; color: var(--muted); }
+:root[data-theme="dark"] .more { background: #16171d; }
+
+/* organize rail */
+:root[data-theme="dark"] .rail { background: rgba(22,23,29,.5); }
+:root[data-theme="dark"] .rail-empty-glyph { border-color: #3a3d4c; color: var(--muted); }
+:root[data-theme="dark"] .badge-err { background: #2c1614; color: #ef8f88; border-color: #5a2823; }
+:root[data-theme="dark"] .badge-warn { background: #2a2410; color: #e2c96c; border-color: #574c22; }
+:root[data-theme="dark"] .warn-list li { background: #1a1c24; border-color: #574c22; }
+:root[data-theme="dark"] .warn-list li.sev-error { border-color: #5a2823; }
+:root[data-theme="dark"] .warn-text strong { color: #d3d5df; }
+:root[data-theme="dark"] .warn-actions .ask { background: #201b33; border-color: #3a2f5c; color: #b9a4e6; }
+:root[data-theme="dark"] .warn-actions .dismiss { background: #1c1e27; border-color: var(--line-2); color: var(--muted); }
+:root[data-theme="dark"] .move-list li { background: #1a1c24; border-color: #2b2e3a; }
+:root[data-theme="dark"] .move-list .mv-mark { background: #676b7d; }
+:root[data-theme="dark"] .move-list .mv-mark.dir { background: #2a2d3a; border-color: #4a4d5c; }
+:root[data-theme="dark"] .move-list .mv-path { color: #c3c6d2; }
+:root[data-theme="dark"] .move-list .mv-path .arr { color: var(--faint); }
+:root[data-theme="dark"] .x-btn { color: var(--faint); }
+
+/* modals + toast + search */
+:root[data-theme="dark"] .modal { background: rgba(0,0,0,.55); }
+:root[data-theme="dark"] .modal-box { background: #16171d; border-color: var(--line-2); box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+:root[data-theme="dark"] .commands.light { background: #101116; color: #c3c6d2; border-bottom-color: var(--card-line); }
+:root[data-theme="dark"] .modal-foot { border-top-color: #2b2e3a; }
+:root[data-theme="dark"] .force-row { color: #e2c96c; }
+:root[data-theme="dark"] .ai-context { background: #101116; color: var(--ink-soft); }
+:root[data-theme="dark"] #ai-question { background: #1c1e27; color: var(--ink); border-color: var(--line-2); }
+:root[data-theme="dark"] .ai-answer { color: #b9a4e6; }
+:root[data-theme="dark"] .toast { background: #1c1e27; color: var(--ink); border: 1px solid var(--line-2); }
+:root[data-theme="dark"] #search-input { background: #1c1e27; color: var(--ink); border-color: var(--line-2); }
+:root[data-theme="dark"] .search-results { background: #16171d; border-color: var(--line-2); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
+:root[data-theme="dark"] .search-hit { color: var(--ink); }
+:root[data-theme="dark"] .search-hit:hover { background: #22242f; }

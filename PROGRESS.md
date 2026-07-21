@@ -137,6 +137,32 @@ python -m ruff check backend/ tests/
 
 ## Log
 
+### 2026-07-20 (dark mode — Railway-style)
+- **Added a dark theme in the "Railway" aesthetic** (cool near-black `#0d0e12` +
+  violet `#8b5cf6` accent, sleek sans — Caveat retired in dark), plus a topbar
+  toggle. User picked the full-Railway direction over a warmer "notebook-dark"
+  (the two clash: the app's identity is a warm paper aesthetic, so dark-Railway
+  is a second design language, not an inversion).
+  - **Mechanism:** reuses the existing `data-theme` seam on `<html>`. A synchronous
+    inline script in `index.html` `<head>` applies the saved (localStorage
+    `labOrganizer.theme`) or system-preferred theme **before first paint** (no
+    flash). `app.js` `initTheme()` wires the `#theme-toggle` button (☾/☀), flips
+    cream↔dark, and persists. Default when nothing saved = system preference.
+  - **CSS:** one self-contained `:root[data-theme="dark"]` section appended to
+    `styles.css`; the light theme above is byte-for-byte unchanged (low risk).
+    Redefines the custom props (most of the UI recolors for free), then overrides
+    every selector baking in a light literal (`#fff` cards, `rgba(255,255,255,..)`
+    topbar/rail, `#FFFDF7` folders, badges, modals, toast, search, scrollbars).
+    The five `pal-*` project palettes keep a **faint hue** on dark surfaces so
+    cards stay colour-coded. Fixed two var-inversion traps: `.queue-head .count`
+    and `.btn.solid`/`.toast` (which use `var(--ink)`/`var(--paper)`) — repointed
+    to violet/surface so they don't become light-on-light in dark.
+  - **Verified:** `node --check` on app.js clean; **Playwright e2e green** (1 passed,
+    8.5s) — confirms boot + full move flow survive the markup/JS changes. **NOT
+    machine-verified:** the actual dark visual (inherently visual); ready to eyeball
+    via `LAB_ROOT=<dir> uvicorn backend.main:app --port 8000`. Not pushed (awaiting
+    the user's OK).
+
 ### 2026-07-19 (project-card collision resolution)
 - **Project cards on the root canvas no longer overlap.** Two causes: the default
   grid in `defaultPos` assumes a 392px row while card height is content-driven, and

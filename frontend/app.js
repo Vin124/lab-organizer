@@ -6,7 +6,34 @@ import { initSearch } from "./search.js";
 
 let cfg = null;
 
+const THEME_KEY = "labOrganizer.theme";
+function currentTheme() {
+  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "cream";
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  const btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  const dark = theme === "dark";
+  btn.textContent = dark ? "☀" : "☾";
+  btn.title = dark ? "Switch to light mode" : "Switch to dark mode";
+  btn.setAttribute("aria-label", btn.title);
+}
+function initTheme() {
+  // The inline head script already set data-theme (no-flash); reflect it on the
+  // button, then let the toggle flip + persist the choice.
+  applyTheme(currentTheme());
+  const btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "cream" : "dark";
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* ignore */ }
+    applyTheme(next);
+  });
+}
+
 async function boot() {
+  initTheme();
   try {
     cfg = await api.config();
   } catch (e) {

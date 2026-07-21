@@ -9,6 +9,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/styles.css" />
+  <script>
+    // Apply the saved (or system-preferred) theme before first paint so there's
+    // no flash of the light theme on load. app.js wires the toggle after boot.
+    (function () {
+      try {
+        var saved = localStorage.getItem("labOrganizer.theme");
+        var theme = saved || (window.matchMedia
+          && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "cream");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) { /* localStorage/matchMedia unavailable — keep default */ }
+    })();
+  </script>
 </head>
 <body>
   <!-- ================= HEADER ================= -->
@@ -31,6 +43,8 @@
     </div>
 
     <div class="topbar-right">
+      <button id="theme-toggle" class="theme-toggle" type="button"
+              aria-label="Toggle dark mode" title="Toggle dark mode">☾</button>
       <span id="status-pill" class="pill" hidden></span>
       <div id="queue-head" class="queue-head" hidden>
         <span id="move-count" class="count">0</span>
